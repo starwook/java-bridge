@@ -1,9 +1,16 @@
-package bridge;
+package bridge.domain;
+
+import bridge.resource.GameResult;
+import bridge.view.InputView;
+import bridge.view.OutputView;
+import bridge.resource.UserCommand;
 
 public class BridgeMachine {
     private int totalTry = 1;
     private int index = 0;
     private boolean success = false;
+    private static final String canCross ="O";
+    private static final String cantCross = "X";
 
     public void initiateBridgeMachine() {
         BridgeGame bridgeGame = bridgeGameStart();
@@ -14,7 +21,7 @@ public class BridgeMachine {
 
     private void playBridgeGame(BridgeGame bridgeGame, Bridge bridge) {
         while (true) {
-            if (userMove(bridgeGame, bridge, getUserCommand())) break;
+            if (!checkUserCanMove(bridgeGame, bridge, getUserCommand())) break;
             if (checkLastIndex(bridge)) break;
         }
     }
@@ -23,26 +30,18 @@ public class BridgeMachine {
         OutputView.gameStart();
         return bridgeGame;
     }
-    private boolean userMove(BridgeGame bridgeGame, Bridge bridge, String userMoveCommand) {
-        if (!bridgeGame.move(userMoveCommand, bridge, index)) {
-            bridge.changeBridgeMap(index, userMoveCommand, "X");
-            if (chooseReplay(bridgeGame, bridge)) {
-                return true;
-            }
+    private boolean checkUserCanMove(BridgeGame bridgeGame, Bridge bridge, String userMoveCommand) {
+        if(bridgeGame.move(userMoveCommand,bridge,index)){
+            bridge.changeBridgeMap(index,userMoveCommand,canCross);
+            OutputView.printMap(bridge.getBridgeMap(),index);
+            index++;
+            return true;
         }
-        bridge.changeBridgeMap(index, userMoveCommand, "O");
-        OutputView.printMap(bridge.getBridgeMap(), index);
-        index++;
-        return false;
+        bridge.changeBridgeMap(index, userMoveCommand, cantCross);
+        OutputView.printMap(bridge.getBridgeMap(),index);
+        return checkReplay(bridgeGame, bridge,getReplayCommand());
     }
 
-    private boolean chooseReplay(BridgeGame bridgeGame, Bridge bridge) {
-        OutputView.printMap(bridge.getBridgeMap(), index);
-        if (checkReplay(bridgeGame, bridge, getReplayCommand())){
-            return false;
-        }
-        return true;
-    }
     private boolean checkReplay(BridgeGame bridgeGame, Bridge bridge, String replay) {
         if (replay.equals(UserCommand.REPLAY.getCommand())) {
             bridgeGame.retry(bridge);
