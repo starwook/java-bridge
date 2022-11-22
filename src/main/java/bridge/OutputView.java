@@ -32,19 +32,20 @@ public class OutputView {
         Iterator<String> keys = bridgeMap.keySet().iterator();
         while(keys.hasNext()){
             String command = keys.next();
-            System.out.print(BRIDGE_LEFT);
-            for(int j=0;j<index+1;j++){
-                System.out.print(bridgeMap.get(command).get(j));
-                if(j!=index){
-                    System.out.print(BRIDGE_MIDDLE);
-                }
-            }
-            System.out.println(BRIDGE_RIGHT);
+            printEachBridge(bridgeMap, index, command);
         }
     }
-    private static void printInsideMap(int index, String bridgePosition) {
-
+    private static void printEachBridge(Map<String, List<String>> bridgeMap, int index, String command) {
+        System.out.print(BRIDGE_LEFT);
+        for(int j = 0; j<= index; j++){
+            System.out.print(bridgeMap.get(command).get(j));
+            if(j!= index){
+                System.out.print(BRIDGE_MIDDLE);
+            }
+        }
+        System.out.println(BRIDGE_RIGHT);
     }
+
 
     /**
      * 게임의 최종 결과를 정해진 형식에 맞춰 출력한다.
@@ -73,5 +74,8 @@ public class OutputView {
     }
     public static void printTotalTry(int totalTry){
         System.out.println(TOTAL_TRY+IS+totalTry);
+    }
+    public static void printError(String errorMessage){
+        System.out.println(errorMessage);
     }
 }
